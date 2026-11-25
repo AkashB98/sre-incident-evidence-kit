@@ -1,0 +1,103 @@
+{
+  "incident_id": "inc-002",
+  "title": "API 500s after release \u2014 bad deploy regression",
+  "start_time": "2026-01-14T14:00:00Z",
+  "ground_truth_cause_id": "deploy_regression",
+  "candidate_causes": [
+    {
+      "id": "deploy_regression",
+      "label": "Regression from latest deploy",
+      "description": "Regression from latest deploy"
+    },
+    {
+      "id": "db_pool_exhaustion",
+      "label": "Database connection pool exhaustion",
+      "description": "Database connection pool exhaustion"
+    },
+    {
+      "id": "upstream_outage",
+      "label": "Upstream provider outage",
+      "description": "Upstream provider outage"
+    }
+  ],
+  "notes": "Deploy really is the cause \u2014 scorer and baseline should both get this.",
+  "sources": {
+    "logs": [
+      {
+        "id": "inc002-log-01",
+        "timestamp": "2026-01-14T14:03:00Z",
+        "source_type": "log",
+        "summary": "NullPointer in new pricing handler introduced in v3.2.0",
+        "supports": [
+          "deploy_regression"
+        ],
+        "contradicts": [],
+        "decisive": true
+      },
+      {
+        "id": "inc002-log-02",
+        "timestamp": "2026-01-14T14:05:00Z",
+        "source_type": "log",
+        "summary": "Stack traces all originate from code added in v3.2.0",
+        "supports": [
+          "deploy_regression"
+        ],
+        "contradicts": [],
+        "decisive": true
+      }
+    ],
+    "metrics": [
+      {
+        "id": "inc002-met-01",
+        "timestamp": "2026-01-14T14:01:00Z",
+        "source_type": "metric",
+        "summary": "api_5xx_rate jumps from 0.1% to 18% within 1 min of deploy",
+        "supports": [
+          "deploy_regression"
+        ],
+        "contradicts": [],
+        "decisive": true
+      },
+      {
+        "id": "inc002-met-02",
+        "timestamp": "2026-01-14T14:02:00Z",
+        "source_type": "metric",
+        "summary": "db_pool utilisation normal at 42%",
+        "supports": [],
+        "contradicts": [
+          "db_pool_exhaustion"
+        ],
+        "decisive": false
+      }
+    ],
+    "alerts": [
+      {
+        "id": "inc002-alert-01",
+        "timestamp": "2026-01-14T14:02:00Z",
+        "source_type": "alert",
+        "summary": "P1 API 5xx rate high",
+        "supports": [
+          "deploy_regression"
+        ],
+        "contradicts": [],
+        "decisive": false,
+        "implies_cause": "deploy_regression",
+        "severity": "P1"
+      }
+    ],
+    "deploys": [
+      {
+        "id": "inc002-dep-01",
+        "timestamp": "2026-01-14T14:00:00Z",
+        "source_type": "deploy",
+        "summary": "Deploy api v3.2.0 with pricing handler rewrite",
+        "supports": [
+          "deploy_regression"
+        ],
+        "contradicts": [],
+        "decisive": true,
+        "implies_cause": "deploy_regression"
+      }
+    ]
+  }
+}
