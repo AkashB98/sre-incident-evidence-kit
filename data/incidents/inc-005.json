@@ -1,0 +1,102 @@
+{
+  "incident_id": "inc-005",
+  "title": "Ingest stops \u2014 disk full from log volume",
+  "start_time": "2026-01-22T03:00:00Z",
+  "ground_truth_cause_id": "disk_full",
+  "candidate_causes": [
+    {
+      "id": "disk_full",
+      "label": "Disk full from log volume",
+      "description": "Disk full from log volume"
+    },
+    {
+      "id": "upstream_outage",
+      "label": "Upstream provider outage",
+      "description": "Upstream provider outage"
+    },
+    {
+      "id": "memory_leak",
+      "label": "Memory leak / OOM",
+      "description": "Memory leak / OOM"
+    }
+  ],
+  "notes": "Gradual disk fill, not a sudden code fault.",
+  "sources": {
+    "logs": [
+      {
+        "id": "inc005-log-01",
+        "timestamp": "2026-01-22T02:50:00Z",
+        "source_type": "log",
+        "summary": "Write failed: No space left on device on ingest volume",
+        "supports": [
+          "disk_full"
+        ],
+        "contradicts": [],
+        "decisive": true
+      },
+      {
+        "id": "inc005-log-02",
+        "timestamp": "2026-01-22T02:55:00Z",
+        "source_type": "log",
+        "summary": "Debug logging at 40 GB/hour from a verbose component",
+        "supports": [
+          "disk_full"
+        ],
+        "contradicts": [],
+        "decisive": true
+      }
+    ],
+    "metrics": [
+      {
+        "id": "inc005-met-01",
+        "timestamp": "2026-01-22T02:30:00Z",
+        "source_type": "metric",
+        "summary": "disk_utilisation climbs 71% -> 100% over 6 hours",
+        "supports": [
+          "disk_full"
+        ],
+        "contradicts": [],
+        "decisive": true
+      },
+      {
+        "id": "inc005-met-02",
+        "timestamp": "2026-01-22T03:00:00Z",
+        "source_type": "metric",
+        "summary": "memory utilisation flat at 55%",
+        "supports": [],
+        "contradicts": [
+          "memory_leak"
+        ],
+        "decisive": false
+      }
+    ],
+    "alerts": [
+      {
+        "id": "inc005-alert-01",
+        "timestamp": "2026-01-22T03:01:00Z",
+        "source_type": "alert",
+        "summary": "P1 ingest stopped",
+        "supports": [
+          "disk_full"
+        ],
+        "contradicts": [],
+        "decisive": false,
+        "implies_cause": "disk_full",
+        "severity": "P1"
+      }
+    ],
+    "deploys": [
+      {
+        "id": "inc005-dep-01",
+        "timestamp": "2026-01-22T01:00:00Z",
+        "source_type": "deploy",
+        "summary": "Deploy ingest v2.0.1 two hours earlier, no logging changes",
+        "supports": [],
+        "contradicts": [
+          "memory_leak"
+        ],
+        "decisive": false
+      }
+    ]
+  }
+}
