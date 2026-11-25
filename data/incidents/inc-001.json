@@ -1,0 +1,149 @@
+{
+  "incident_id": "inc-001",
+  "title": "Checkout latency spike \u2014 connection pool exhaustion",
+  "start_time": "2026-01-12T10:00:00Z",
+  "ground_truth_cause_id": "db_pool_exhaustion",
+  "candidate_causes": [
+    {
+      "id": "db_pool_exhaustion",
+      "label": "Database connection pool exhaustion",
+      "description": "Database connection pool exhaustion"
+    },
+    {
+      "id": "deploy_regression",
+      "label": "Regression from latest deploy",
+      "description": "Regression from latest deploy"
+    },
+    {
+      "id": "cache_miss_storm",
+      "label": "Cache miss storm",
+      "description": "Cache miss storm"
+    }
+  ],
+  "notes": "RED HERRING: deploy at incident time exonerated by metric timing (pool saturated 20m earlier).",
+  "sources": {
+    "logs": [
+      {
+        "id": "inc001-log-01",
+        "timestamp": "2026-01-12T09:42:00Z",
+        "source_type": "log",
+        "summary": "DB pool wait queue growing: 48 threads waiting for connection",
+        "supports": [
+          "db_pool_exhaustion"
+        ],
+        "contradicts": [],
+        "decisive": true
+      },
+      {
+        "id": "inc001-log-02",
+        "timestamp": "2026-01-12T09:55:00Z",
+        "source_type": "log",
+        "summary": "Checkout handler timing out acquiring DB connection",
+        "supports": [
+          "db_pool_exhaustion"
+        ],
+        "contradicts": [],
+        "decisive": true
+      },
+      {
+        "id": "inc001-log-03",
+        "timestamp": "2026-01-12T10:02:00Z",
+        "source_type": "log",
+        "summary": "Cache hit ratio log line: hit ratio stable at 94%",
+        "supports": [],
+        "contradicts": [
+          "cache_miss_storm"
+        ],
+        "decisive": false
+      }
+    ],
+    "metrics": [
+      {
+        "id": "inc001-met-01",
+        "timestamp": "2026-01-12T09:40:00Z",
+        "source_type": "metric",
+        "summary": "db_pool_active_connections at max (100/100) 20 min before deploy",
+        "supports": [
+          "db_pool_exhaustion"
+        ],
+        "contradicts": [
+          "deploy_regression"
+        ],
+        "decisive": true
+      },
+      {
+        "id": "inc001-met-02",
+        "timestamp": "2026-01-12T09:45:00Z",
+        "source_type": "metric",
+        "summary": "db_pool_wait_ms rising steadily from 09:40, before any deploy",
+        "supports": [
+          "db_pool_exhaustion"
+        ],
+        "contradicts": [
+          "deploy_regression"
+        ],
+        "decisive": true
+      },
+      {
+        "id": "inc001-met-03",
+        "timestamp": "2026-01-12T10:05:00Z",
+        "source_type": "metric",
+        "summary": "cache_hit_ratio 0.94 flat throughout incident",
+        "supports": [],
+        "contradicts": [
+          "cache_miss_storm"
+        ],
+        "decisive": true
+      }
+    ],
+    "alerts": [
+      {
+        "id": "inc001-alert-01",
+        "timestamp": "2026-01-12T10:00:00Z",
+        "source_type": "alert",
+        "summary": "P1 checkout latency > 3s",
+        "supports": [
+          "db_pool_exhaustion"
+        ],
+        "contradicts": [],
+        "decisive": false,
+        "implies_cause": "db_pool_exhaustion",
+        "severity": "P1"
+      },
+      {
+        "id": "inc001-alert-02",
+        "timestamp": "2026-01-12T10:01:00Z",
+        "source_type": "alert",
+        "summary": "Deploy completed notification for api v2.14.1",
+        "supports": [],
+        "contradicts": [],
+        "decisive": false,
+        "implies_cause": "deploy_regression",
+        "severity": "P3"
+      }
+    ],
+    "deploys": [
+      {
+        "id": "inc001-dep-01",
+        "timestamp": "2026-01-12T10:00:00Z",
+        "source_type": "deploy",
+        "summary": "Deploy api v2.14.1 (docs-only change) completed at incident start",
+        "supports": [],
+        "contradicts": [],
+        "decisive": false,
+        "implies_cause": "deploy_regression"
+      },
+      {
+        "id": "inc001-dep-02",
+        "timestamp": "2026-01-12T08:00:00Z",
+        "source_type": "deploy",
+        "summary": "No application code deploy in the 2h before pool saturation began",
+        "supports": [],
+        "contradicts": [
+          "deploy_regression"
+        ],
+        "decisive": false
+      }
+    ]
+  }
+}
