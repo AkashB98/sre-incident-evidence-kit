@@ -1,0 +1,105 @@
+{
+  "incident_id": "inc-004",
+  "title": "Payments failing \u2014 upstream provider outage",
+  "start_time": "2026-01-20T16:00:00Z",
+  "ground_truth_cause_id": "upstream_outage",
+  "candidate_causes": [
+    {
+      "id": "upstream_outage",
+      "label": "Upstream payment provider outage",
+      "description": "Upstream payment provider outage"
+    },
+    {
+      "id": "deploy_regression",
+      "label": "Regression from latest deploy",
+      "description": "Regression from latest deploy"
+    },
+    {
+      "id": "config_flag_error",
+      "label": "Feature flag / config error",
+      "description": "Feature flag / config error"
+    }
+  ],
+  "notes": "RED HERRING: deploy at incident time exonerated \u2014 errors began before it and match provider timeline.",
+  "sources": {
+    "logs": [
+      {
+        "id": "inc004-log-01",
+        "timestamp": "2026-01-20T15:59:00Z",
+        "source_type": "log",
+        "summary": "Payment provider returning HTTP 503 from all regions",
+        "supports": [
+          "upstream_outage"
+        ],
+        "contradicts": [],
+        "decisive": true
+      },
+      {
+        "id": "inc004-log-02",
+        "timestamp": "2026-01-20T16:02:00Z",
+        "source_type": "log",
+        "summary": "Our handlers retrying provider calls, no local code errors in traces",
+        "supports": [
+          "upstream_outage"
+        ],
+        "contradicts": [
+          "deploy_regression"
+        ],
+        "decisive": false
+      }
+    ],
+    "metrics": [
+      {
+        "id": "inc004-met-01",
+        "timestamp": "2026-01-20T15:58:00Z",
+        "source_type": "metric",
+        "summary": "provider_success_rate drops to 12% while internal service health stays green",
+        "supports": [
+          "upstream_outage"
+        ],
+        "contradicts": [],
+        "decisive": true
+      },
+      {
+        "id": "inc004-met-02",
+        "timestamp": "2026-01-20T16:00:00Z",
+        "source_type": "metric",
+        "summary": "Error onset precedes the 16:00 deploy by 2 minutes and matches provider status timeline",
+        "supports": [
+          "upstream_outage"
+        ],
+        "contradicts": [
+          "deploy_regression"
+        ],
+        "decisive": true
+      }
+    ],
+    "alerts": [
+      {
+        "id": "inc004-alert-01",
+        "timestamp": "2026-01-20T16:01:00Z",
+        "source_type": "alert",
+        "summary": "P1 payment success rate low",
+        "supports": [
+          "upstream_outage"
+        ],
+        "contradicts": [],
+        "decisive": false,
+        "implies_cause": "upstream_outage",
+        "severity": "P1"
+      }
+    ],
+    "deploys": [
+      {
+        "id": "inc004-dep-01",
+        "timestamp": "2026-01-20T16:00:00Z",
+        "source_type": "deploy",
+        "summary": "Deploy payments v4.1.2 (copy change) at incident time",
+        "supports": [],
+        "contradicts": [],
+        "decisive": false,
+        "implies_cause": "deploy_regression"
+      }
+    ]
+  }
+}
