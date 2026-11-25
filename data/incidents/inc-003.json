@@ -1,0 +1,117 @@
+{
+  "incident_id": "inc-003",
+  "title": "Product pages slow \u2014 cache stampede",
+  "start_time": "2026-01-18T09:00:00Z",
+  "ground_truth_cause_id": "cache_failure",
+  "candidate_causes": [
+    {
+      "id": "cache_failure",
+      "label": "Cache failure / stampede",
+      "description": "Cache failure / stampede"
+    },
+    {
+      "id": "db_overload",
+      "label": "Primary database overload as root cause",
+      "description": "Primary database overload as root cause"
+    },
+    {
+      "id": "deploy_regression",
+      "label": "Regression from latest deploy",
+      "description": "Regression from latest deploy"
+    }
+  ],
+  "notes": "RED HERRING: loudest alert is DB CPU, but DB load is an effect of cache failure, not the cause.",
+  "sources": {
+    "logs": [
+      {
+        "id": "inc003-log-01",
+        "timestamp": "2026-01-18T08:58:00Z",
+        "source_type": "log",
+        "summary": "Cache node evictions spiking; thousands of keys expired simultaneously",
+        "supports": [
+          "cache_failure"
+        ],
+        "contradicts": [],
+        "decisive": true
+      },
+      {
+        "id": "inc003-log-02",
+        "timestamp": "2026-01-18T09:02:00Z",
+        "source_type": "log",
+        "summary": "Origin DB receiving 10x normal query volume from cache misses",
+        "supports": [
+          "cache_failure"
+        ],
+        "contradicts": [
+          "db_overload"
+        ],
+        "decisive": true
+      }
+    ],
+    "metrics": [
+      {
+        "id": "inc003-met-01",
+        "timestamp": "2026-01-18T08:57:00Z",
+        "source_type": "metric",
+        "summary": "cache_hit_ratio collapses 0.96 -> 0.31 in 3 minutes",
+        "supports": [
+          "cache_failure"
+        ],
+        "contradicts": [],
+        "decisive": true
+      },
+      {
+        "id": "inc003-met-02",
+        "timestamp": "2026-01-18T09:03:00Z",
+        "source_type": "metric",
+        "summary": "db_cpu rises only AFTER cache hit ratio collapse",
+        "supports": [
+          "cache_failure"
+        ],
+        "contradicts": [
+          "db_overload"
+        ],
+        "decisive": true
+      }
+    ],
+    "alerts": [
+      {
+        "id": "inc003-alert-01",
+        "timestamp": "2026-01-18T09:05:00Z",
+        "source_type": "alert",
+        "summary": "P1 DB CPU > 95% (loudest alert)",
+        "supports": [],
+        "contradicts": [],
+        "decisive": false,
+        "implies_cause": "db_overload",
+        "severity": "P1"
+      },
+      {
+        "id": "inc003-alert-02",
+        "timestamp": "2026-01-18T09:01:00Z",
+        "source_type": "alert",
+        "summary": "P2 cache hit ratio low",
+        "supports": [
+          "cache_failure"
+        ],
+        "contradicts": [],
+        "decisive": false,
+        "implies_cause": "cache_failure",
+        "severity": "P2"
+      }
+    ],
+    "deploys": [
+      {
+        "id": "inc003-dep-01",
+        "timestamp": "2026-01-18T07:30:00Z",
+        "source_type": "deploy",
+        "summary": "Deploy catalogue v1.9.0 completed 90 min before incident, no cache code changed",
+        "supports": [],
+        "contradicts": [
+          "deploy_regression"
+        ],
+        "decisive": false
+      }
+    ]
+  }
+}
