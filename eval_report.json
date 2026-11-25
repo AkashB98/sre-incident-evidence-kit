@@ -1,0 +1,338 @@
+{
+  "n_incidents": 7,
+  "scorer_top1_accuracy": 1.0,
+  "scorer_top3_accuracy": 1.0,
+  "evidence_completeness": 1.0,
+  "baseline_top1_accuracy": 0.4286,
+  "baseline_label": "latest deploy within 15 min, else loudest alert",
+  "per_incident": [
+    {
+      "incident_id": "inc-001",
+      "ground_truth": "db_pool_exhaustion",
+      "scorer_top1": "db_pool_exhaustion",
+      "scorer_top3": [
+        "db_pool_exhaustion",
+        "cache_miss_storm",
+        "deploy_regression"
+      ],
+      "top1_correct": true,
+      "top3_correct": true,
+      "baseline_pick": "deploy_regression",
+      "baseline_correct": false,
+      "evidence_completeness": 1.0,
+      "decisive_total": 5,
+      "decisive_surfaced": 5,
+      "ranked": [
+        {
+          "cause_id": "db_pool_exhaustion",
+          "score": 9,
+          "supporting": [
+            "inc001-met-01",
+            "inc001-log-01",
+            "inc001-met-02",
+            "inc001-log-02",
+            "inc001-alert-01"
+          ],
+          "contradicted_by": []
+        },
+        {
+          "cause_id": "cache_miss_storm",
+          "score": -3,
+          "supporting": [],
+          "contradicted_by": [
+            "inc001-log-03",
+            "inc001-met-03"
+          ]
+        },
+        {
+          "cause_id": "deploy_regression",
+          "score": -5,
+          "supporting": [],
+          "contradicted_by": [
+            "inc001-dep-02",
+            "inc001-met-01",
+            "inc001-met-02"
+          ]
+        }
+      ]
+    },
+    {
+      "incident_id": "inc-002",
+      "ground_truth": "deploy_regression",
+      "scorer_top1": "deploy_regression",
+      "scorer_top3": [
+        "deploy_regression",
+        "upstream_outage",
+        "db_pool_exhaustion"
+      ],
+      "top1_correct": true,
+      "top3_correct": true,
+      "baseline_pick": "deploy_regression",
+      "baseline_correct": true,
+      "evidence_completeness": 1.0,
+      "decisive_total": 4,
+      "decisive_surfaced": 4,
+      "ranked": [
+        {
+          "cause_id": "deploy_regression",
+          "score": 9,
+          "supporting": [
+            "inc002-dep-01",
+            "inc002-met-01",
+            "inc002-alert-01",
+            "inc002-log-01",
+            "inc002-log-02"
+          ],
+          "contradicted_by": []
+        },
+        {
+          "cause_id": "upstream_outage",
+          "score": 0,
+          "supporting": [],
+          "contradicted_by": []
+        },
+        {
+          "cause_id": "db_pool_exhaustion",
+          "score": -1,
+          "supporting": [],
+          "contradicted_by": [
+            "inc002-met-02"
+          ]
+        }
+      ]
+    },
+    {
+      "incident_id": "inc-003",
+      "ground_truth": "cache_failure",
+      "scorer_top1": "cache_failure",
+      "scorer_top3": [
+        "cache_failure",
+        "deploy_regression",
+        "db_overload"
+      ],
+      "top1_correct": true,
+      "top3_correct": true,
+      "baseline_pick": "db_overload",
+      "baseline_correct": false,
+      "evidence_completeness": 1.0,
+      "decisive_total": 4,
+      "decisive_surfaced": 4,
+      "ranked": [
+        {
+          "cause_id": "cache_failure",
+          "score": 9,
+          "supporting": [
+            "inc003-met-01",
+            "inc003-log-01",
+            "inc003-alert-02",
+            "inc003-log-02",
+            "inc003-met-02"
+          ],
+          "contradicted_by": []
+        },
+        {
+          "cause_id": "deploy_regression",
+          "score": -1,
+          "supporting": [],
+          "contradicted_by": [
+            "inc003-dep-01"
+          ]
+        },
+        {
+          "cause_id": "db_overload",
+          "score": -4,
+          "supporting": [],
+          "contradicted_by": [
+            "inc003-log-02",
+            "inc003-met-02"
+          ]
+        }
+      ]
+    },
+    {
+      "incident_id": "inc-004",
+      "ground_truth": "upstream_outage",
+      "scorer_top1": "upstream_outage",
+      "scorer_top3": [
+        "upstream_outage",
+        "config_flag_error",
+        "deploy_regression"
+      ],
+      "top1_correct": true,
+      "top3_correct": true,
+      "baseline_pick": "deploy_regression",
+      "baseline_correct": false,
+      "evidence_completeness": 1.0,
+      "decisive_total": 3,
+      "decisive_surfaced": 3,
+      "ranked": [
+        {
+          "cause_id": "upstream_outage",
+          "score": 8,
+          "supporting": [
+            "inc004-met-01",
+            "inc004-log-01",
+            "inc004-met-02",
+            "inc004-alert-01",
+            "inc004-log-02"
+          ],
+          "contradicted_by": []
+        },
+        {
+          "cause_id": "config_flag_error",
+          "score": 0,
+          "supporting": [],
+          "contradicted_by": []
+        },
+        {
+          "cause_id": "deploy_regression",
+          "score": -3,
+          "supporting": [],
+          "contradicted_by": [
+            "inc004-met-02",
+            "inc004-log-02"
+          ]
+        }
+      ]
+    },
+    {
+      "incident_id": "inc-005",
+      "ground_truth": "disk_full",
+      "scorer_top1": "disk_full",
+      "scorer_top3": [
+        "disk_full",
+        "upstream_outage",
+        "memory_leak"
+      ],
+      "top1_correct": true,
+      "top3_correct": true,
+      "baseline_pick": "disk_full",
+      "baseline_correct": true,
+      "evidence_completeness": 1.0,
+      "decisive_total": 3,
+      "decisive_surfaced": 3,
+      "ranked": [
+        {
+          "cause_id": "disk_full",
+          "score": 7,
+          "supporting": [
+            "inc005-met-01",
+            "inc005-log-01",
+            "inc005-log-02",
+            "inc005-alert-01"
+          ],
+          "contradicted_by": []
+        },
+        {
+          "cause_id": "upstream_outage",
+          "score": 0,
+          "supporting": [],
+          "contradicted_by": []
+        },
+        {
+          "cause_id": "memory_leak",
+          "score": -2,
+          "supporting": [],
+          "contradicted_by": [
+            "inc005-dep-01",
+            "inc005-met-02"
+          ]
+        }
+      ]
+    },
+    {
+      "incident_id": "inc-006",
+      "ground_truth": "memory_leak",
+      "scorer_top1": "memory_leak",
+      "scorer_top3": [
+        "memory_leak",
+        "disk_full",
+        "deploy_regression"
+      ],
+      "top1_correct": true,
+      "top3_correct": true,
+      "baseline_pick": "deploy_regression",
+      "baseline_correct": false,
+      "evidence_completeness": 1.0,
+      "decisive_total": 4,
+      "decisive_surfaced": 4,
+      "ranked": [
+        {
+          "cause_id": "memory_leak",
+          "score": 9,
+          "supporting": [
+            "inc006-met-01",
+            "inc006-log-02",
+            "inc006-log-01",
+            "inc006-met-02",
+            "inc006-alert-01"
+          ],
+          "contradicted_by": []
+        },
+        {
+          "cause_id": "disk_full",
+          "score": -1,
+          "supporting": [],
+          "contradicted_by": [
+            "inc006-met-03"
+          ]
+        },
+        {
+          "cause_id": "deploy_regression",
+          "score": -2,
+          "supporting": [],
+          "contradicted_by": [
+            "inc006-met-02"
+          ]
+        }
+      ]
+    },
+    {
+      "incident_id": "inc-007",
+      "ground_truth": "config_flag_error",
+      "scorer_top1": "config_flag_error",
+      "scorer_top3": [
+        "config_flag_error",
+        "cache_failure",
+        "deploy_regression"
+      ],
+      "top1_correct": true,
+      "top3_correct": true,
+      "baseline_pick": "config_flag_error",
+      "baseline_correct": true,
+      "evidence_completeness": 1.0,
+      "decisive_total": 4,
+      "decisive_surfaced": 4,
+      "ranked": [
+        {
+          "cause_id": "config_flag_error",
+          "score": 9,
+          "supporting": [
+            "inc007-dep-01",
+            "inc007-met-01",
+            "inc007-log-01",
+            "inc007-log-02",
+            "inc007-alert-01"
+          ],
+          "contradicted_by": []
+        },
+        {
+          "cause_id": "cache_failure",
+          "score": -1,
+          "supporting": [],
+          "contradicted_by": [
+            "inc007-met-02"
+          ]
+        },
+        {
+          "cause_id": "deploy_regression",
+          "score": -1,
+          "supporting": [],
+          "contradicted_by": [
+            "inc007-dep-02"
+          ]
+        }
+      ]
+    }
+  ]
+}
