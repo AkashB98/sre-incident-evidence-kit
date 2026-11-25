@@ -1,0 +1,114 @@
+{
+  "incident_id": "inc-007",
+  "title": "Recommendations empty \u2014 feature flag config error",
+  "start_time": "2026-01-28T13:00:00Z",
+  "ground_truth_cause_id": "config_flag_error",
+  "candidate_causes": [
+    {
+      "id": "config_flag_error",
+      "label": "Feature flag / config error",
+      "description": "Feature flag / config error"
+    },
+    {
+      "id": "deploy_regression",
+      "label": "Regression from latest deploy",
+      "description": "Regression from latest deploy"
+    },
+    {
+      "id": "cache_failure",
+      "label": "Cache failure",
+      "description": "Cache failure"
+    }
+  ],
+  "notes": "Config publish, not a code deploy, flipped the flag.",
+  "sources": {
+    "logs": [
+      {
+        "id": "inc007-log-01",
+        "timestamp": "2026-01-28T13:01:00Z",
+        "source_type": "log",
+        "summary": "Flag reco_v2 evaluated false for 100% of users after config publish",
+        "supports": [
+          "config_flag_error"
+        ],
+        "contradicts": [],
+        "decisive": true
+      },
+      {
+        "id": "inc007-log-02",
+        "timestamp": "2026-01-28T13:03:00Z",
+        "source_type": "log",
+        "summary": "Recommendation handler returning empty list by flag branch, no errors",
+        "supports": [
+          "config_flag_error"
+        ],
+        "contradicts": [],
+        "decisive": true
+      }
+    ],
+    "metrics": [
+      {
+        "id": "inc007-met-01",
+        "timestamp": "2026-01-28T13:00:00Z",
+        "source_type": "metric",
+        "summary": "reco_empty_rate jumps to 100% exactly at config publish time",
+        "supports": [
+          "config_flag_error"
+        ],
+        "contradicts": [],
+        "decisive": true
+      },
+      {
+        "id": "inc007-met-02",
+        "timestamp": "2026-01-28T13:02:00Z",
+        "source_type": "metric",
+        "summary": "cache_hit_ratio and service error rate both normal",
+        "supports": [],
+        "contradicts": [
+          "cache_failure"
+        ],
+        "decisive": false
+      }
+    ],
+    "alerts": [
+      {
+        "id": "inc007-alert-01",
+        "timestamp": "2026-01-28T13:05:00Z",
+        "source_type": "alert",
+        "summary": "P2 recommendations empty rate high",
+        "supports": [
+          "config_flag_error"
+        ],
+        "contradicts": [],
+        "decisive": false,
+        "implies_cause": "config_flag_error",
+        "severity": "P2"
+      }
+    ],
+    "deploys": [
+      {
+        "id": "inc007-dep-01",
+        "timestamp": "2026-01-28T12:00:00Z",
+        "source_type": "deploy",
+        "summary": "Config publish: reco_v2 flag targeting changed (no code deploy)",
+        "supports": [
+          "config_flag_error"
+        ],
+        "contradicts": [],
+        "decisive": true,
+        "implies_cause": "config_flag_error"
+      },
+      {
+        "id": "inc007-dep-02",
+        "timestamp": "2026-01-28T09:00:00Z",
+        "source_type": "deploy",
+        "summary": "Last code deploy was 4h earlier with no reco changes",
+        "supports": [],
+        "contradicts": [
+          "deploy_regression"
+        ],
+        "decisive": false
+      }
+    ]
+  }
+}
